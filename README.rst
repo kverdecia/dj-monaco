@@ -1,6 +1,6 @@
-=============================
+===============================
 django widget for monaco editor
-=============================
+===============================
 
 .. image:: https://badge.fury.io/py/dj-monaco.svg
     :target: https://badge.fury.io/py/dj-monaco
@@ -21,7 +21,9 @@ The full documentation is at https://dj-monaco.readthedocs.io.
 Quickstart
 ----------
 
-Install django widget for monaco editor::
+Install django widget for monaco editor:
+
+.. code-block::
 
     pip install dj-monaco
 
@@ -58,7 +60,7 @@ Running Tests
 
 Does the code actually work?
 
-::
+.. code-block::
 
     source <YOURVIRTUALENV>/bin/activate
     (myenv) $ pip install tox
@@ -68,7 +70,7 @@ Does the code actually work?
 Development commands
 ---------------------
 
-::
+.. code-block::
 
     pip install -r requirements_dev.txt
     invoke -l

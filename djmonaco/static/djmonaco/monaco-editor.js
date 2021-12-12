@@ -1,3 +1,4 @@
+'use strict';
 document.addEventListener('DOMContentLoaded', function () {
     require.config({
         paths: {
@@ -5,23 +6,40 @@ document.addEventListener('DOMContentLoaded', function () {
         },
     });
 
-    var containers = Array.from(
-        document.querySelectorAll('textarea[monaco-editor="true"]'));
+    function containerNotInitialized(container) {
+        const editorWrapperId = `${container.id}--editor`;
+        return document.getElementById(editorWrapperId) === null;
+    }
 
-    containers.forEach(function (container) {
+    function getInlineContainers() {
+        // if in django admin returns an array with the containers in inline sections.
+        // Otherwise returns an empty array.
+        if (!window.django || !window.django.jQuery) {
+            return []
+        }
+        const selector = '.inline-group textarea[monaco-editor="true"]';
+        return Array.from(document.querySelectorAll(selector))
+            .filter(containerNotInitialized);
+    }
 
-        var form = container.form;
+    function getContainers() {
+        const selector = 'textarea[monaco-editor="true"]';
+        const inlineContainers = getInlineContainers();
+        return Array.from(document.querySelectorAll(selector))
+            .filter(containerNotInitialized)
+            .filter(container => inlineContainers.indexOf(container) === -1)
+    }
 
-        var editorWrapper = document.createElement('div');
+    function setupEditor(container) {
+        const form = container.form;
+        const editorWrapper = document.createElement('div');
         editorWrapper.id = container.id + '--editor';
         editorWrapper.classList.add('monaco-editor--conteiner');
 
         require(['vs/editor/editor.main'], function () {
             try {
                 container.style.display = 'none';
-                container.parentElement.appendChild(editorWrapper);
-
-
+                container.parentElement.insertBefore(editorWrapper, container);
                 monaco.editor.defineTheme('myTheme', {
                     base: 'vs',
                     inherit: true,
@@ -64,5 +82,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 editorWrapper.remove();
             }
         });
-    })
+    }
+
+    getContainers().forEach(setupEditor);
+
+    // this step is for django admin
+    if (window.django && window.django.jQuery) {
+        document.addEventListener('click', function() {
+            getInlineContainers()
+                .filter(containers => containers.id.indexOf('-__prefix__-') === -1)
+                .forEach(setupEditor);
+        });
+    }
 });

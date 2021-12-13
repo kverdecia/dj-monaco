@@ -1,11 +1,7 @@
 from django import forms
 
 from . import widgets
-# from . import models
-
-
-class MonacoForm(forms.Form):
-    source_code = forms.CharField(widget=widgets.MonacoEditorWidget(attrs={"data-language": "typescript"}))
+from . import models
 
 
 # class SourceCodeForm(forms.ModelForm):
@@ -21,11 +17,16 @@ class MonacoForm(forms.Form):
 #             ),
 #         }
 
-#     class Media:
-#         js = [
-#             'https://unpkg.com/prueba/prueba.js'
-#         ]
 
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.fields['source_code'].label = 'asdkjfakds'
+# class SourceItemForm(forms.ModelForm):
+#     class Meta:
+#         model = models.SourceItem
+#         fields = ('source1', 'source2')
+#         widgets = {
+#             "source1": widgets.MonacoEditorWidget(
+#                 attrs={"data-language": "html"}
+#             ),
+#             "source2": widgets.MonacoEditorWidget(
+#                 attrs={"data-language": "javascript"}
+#             ),
+#         }

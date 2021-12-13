@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.forms import Media
+from django.contrib import admin
+
+from . import models
+from . import forms
 
 
 class MonacoAdminMixin:
@@ -18,3 +22,17 @@ class MonacoAdminMixin:
         media = Media(css=context['media']._css, js=js_assets)
         context['media'] = media
         return super().render_change_form(request, context, add=add, change=change, form_url=form_url, obj=obj)
+
+
+# class SourceItemInline(admin.StackedInline):
+#     model = models.SourceItem
+#     fields = ('source1', 'source2')
+#     form = forms.SourceItemForm
+#     extra = 0
+
+
+# @admin.register(models.SourceCode)
+# class SourceCodeAdmin(MonacoAdminMixin, admin.ModelAdmin):
+#     list_display = ('name',)
+#     form = forms.SourceCodeForm
+#     inlines = [SourceItemInline]

@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return document.getElementById(editorWrapperId) === null;
     }
 
-    function getInlineContainers() {
+    function getInlineContainersWithTemplates() {
         // if in django admin returns an array with the containers in inline sections.
         // Otherwise returns an empty array.
         if (!window.django || !window.django.jQuery) {
@@ -19,12 +19,17 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         const selector = '.inline-group textarea[monaco-editor="true"]';
         return Array.from(document.querySelectorAll(selector))
-            .filter(containerNotInitialized);
+            .filter(containerNotInitialized)
+    }
+
+    function getInlineContainers() {
+        return getInlineContainersWithTemplates()
+            .filter(container => container.id.indexOf('-__prefix__-') === -1);
     }
 
     function getContainers() {
         const selector = 'textarea[monaco-editor="true"]';
-        const inlineContainers = getInlineContainers();
+        const inlineContainers = getInlineContainersWithTemplates();
         return Array.from(document.querySelectorAll(selector))
             .filter(containerNotInitialized)
             .filter(container => inlineContainers.indexOf(container) === -1)
@@ -85,13 +90,12 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     getContainers().forEach(setupEditor);
+    getInlineContainers().forEach(setupEditor);
 
     // this step is for django admin
     if (window.django && window.django.jQuery) {
         document.addEventListener('click', function() {
-            getInlineContainers()
-                .filter(containers => containers.id.indexOf('-__prefix__-') === -1)
-                .forEach(setupEditor);
+            getInlineContainers().forEach(setupEditor);
         });
     }
 });

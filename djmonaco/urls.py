@@ -6,5 +6,4 @@ from . import views
 
 app_name = 'djmonaco'
 urlpatterns = [
-    path('djmonaco/editor/', views.MonacoView.as_view()),
 ]

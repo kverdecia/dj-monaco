@@ -8,7 +8,8 @@ class MonacoEditorWidget(forms.Textarea):
             'monaco-editor': 'true',
             'data-language': 'html',
             'data-wordwrap': 'off',
-            'data-minimap': 'false'
+            'data-minimap': 'false',
+            'data-autoformat': 'false',
         }
         attrs.update(context['widget']['attrs'])
         context['widget']['attrs'] = attrs

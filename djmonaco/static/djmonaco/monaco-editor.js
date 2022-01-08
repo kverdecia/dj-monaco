@@ -73,6 +73,12 @@ document.addEventListener('DOMContentLoaded', function () {
                     emmetMonaco.emmetCSS(monaco);
                 }
 
+                if (container.dataset.autoformat === 'true') {
+                    setTimeout(() => {
+                        editor.getAction('editor.action.formatDocument').run();
+                    }, 100);
+                }
+
                 window[container.id + '_monaco_editor'] = editor;
 
                 window.addEventListener('resize', function () {

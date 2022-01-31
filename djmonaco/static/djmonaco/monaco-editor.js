@@ -1,5 +1,6 @@
 'use strict';
 document.addEventListener('DOMContentLoaded', function () {
+    const isInDjango = !!window.django && !!window.django.jQuery;
     require.config({
         paths: {
             'vs': 'https://unpkg.com/monaco-editor@0.27.0/min/vs',
@@ -14,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function getInlineContainersWithTemplates() {
         // if in django admin returns an array with the containers in inline sections.
         // Otherwise returns an empty array.
-        if (!window.django || !window.django.jQuery) {
+        if (!isInDjango) {
             return []
         }
         const selector = '.inline-group textarea[monaco-editor="true"]';
@@ -39,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const form = container.form;
         const editorWrapper = document.createElement('div');
         editorWrapper.id = container.id + '--editor';
-        editorWrapper.classList.add('monaco-editor--conteiner');
+        editorWrapper.classList.add('monaco-editor--container');
 
         require(['vs/editor/editor.main'], function () {
             try {
@@ -54,6 +55,20 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 });
                 monaco.editor.setTheme('vs-dark');
+
+                const diagnosticsOptions = {};
+
+                if (container.dataset['enableSchemaRequest'] === 'true') {
+                    diagnosticsOptions.validate = true;
+                    diagnosticsOptions.allowComments = false;
+                    diagnosticsOptions.schemas = [],
+                    diagnosticsOptions.enableSchemaRequest = true;
+                }
+
+                if (Object.keys(diagnosticsOptions).length > 1) {
+                    console.log({diagnosticsOptions});
+                    monaco.languages.json.jsonDefaults.setDiagnosticsOptions(diagnosticsOptions);
+                }
 
                 var editor = monaco.editor.create(document.getElementById(container.id + '--editor'), {
                     renderWhitespace: true,
@@ -98,8 +113,18 @@ document.addEventListener('DOMContentLoaded', function () {
     getContainers().forEach(setupEditor);
     getInlineContainers().forEach(setupEditor);
 
+    if (isInDjango) {
+        getContainers().forEach(container => {
+            const className = container.id.replace('id_', 'field-');
+            const field = document.querySelector(`.form-row.${className}`);
+            if (field !== null) {
+                field.style.overflow = 'visible';
+            }
+        })
+    }
+
     // this step is for django admin
-    if (window.django && window.django.jQuery) {
+    if (isInDjango) {
         document.addEventListener('click', function() {
             getInlineContainers().forEach(setupEditor);
         });

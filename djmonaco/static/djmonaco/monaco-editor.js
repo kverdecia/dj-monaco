@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const isInDjango = !!window.django && !!window.django.jQuery;
     require.config({
         paths: {
-            'vs': 'https://unpkg.com/monaco-editor@0.27.0/min/vs',
+            'vs': 'https://unpkg.com/monaco-editor@0.40.0/min/vs',
         },
     });
 
@@ -36,6 +36,17 @@ document.addEventListener('DOMContentLoaded', function () {
             .filter(container => inlineContainers.indexOf(container) === -1)
     }
 
+    function getInlineFieldName(text) {
+        const regex = /-(\d+)-/;
+        const match = text.match(regex);
+        if (!match) {
+            return null;
+        }
+        const startPosition = match.index + match[0].length;
+        const secondSubstring = text.slice(startPosition);
+        return secondSubstring;
+    }
+
     function setupEditor(container) {
         const form = container.form;
         const editorWrapper = document.createElement('div');
@@ -66,7 +77,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
 
                 if (Object.keys(diagnosticsOptions).length > 1) {
-                    console.log({diagnosticsOptions});
                     monaco.languages.json.jsonDefaults.setDiagnosticsOptions(diagnosticsOptions);
                 }
 
@@ -108,20 +118,29 @@ document.addEventListener('DOMContentLoaded', function () {
                 editorWrapper.remove();
             }
         });
-    }
 
-    getContainers().forEach(setupEditor);
-    getInlineContainers().forEach(setupEditor);
-
-    if (isInDjango) {
-        getContainers().forEach(container => {
+        if (isInDjango) {
             const className = container.id.replace('id_', 'field-');
             const field = document.querySelector(`.form-row.${className}`);
             if (field !== null) {
                 field.style.overflow = 'visible';
+                return;
             }
-        })
+
+            const fieldName = getInlineFieldName(container.id);
+            if (fieldName === null) {
+                return;
+            }
+            for (const element of document.querySelectorAll(`.form-row.field-${fieldName}`)) {
+                if (element.querySelector(`#${container.id}`) !== null) {
+                    element.style.overflow = 'visible';
+                }
+            }
+        }
     }
+
+    getContainers().forEach(setupEditor);
+    getInlineContainers().forEach(setupEditor);
 
     // this step is for django admin
     if (isInDjango) {

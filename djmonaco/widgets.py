@@ -17,7 +17,7 @@ class MonacoEditorWidget(forms.Textarea):
 
     class Media:
         js = (
-            'https://unpkg.com/monaco-editor@0.27.0/min/vs/loader.js',
+            'https://unpkg.com/monaco-editor@0.40.0/min/vs/loader.js',
             'https://unpkg.com/emmet-monaco-es/dist/emmet-monaco.min.js',
             'djmonaco/monaco-editor.js',
         )

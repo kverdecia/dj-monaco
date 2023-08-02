@@ -2,14 +2,13 @@
     height: 400px;
     border: 1px solid grey;
     transition: 0.2s;
-    -webkit-transition: 0.2s;
-    transition: 0.2s;
-    width: calc(100% - 180px) !important
+    width: calc(100% - 180px) !important;
+    display: inline-block;
 }
 
 @media only screen and (max-width: 782px) {
     .monaco-editor--container {
         margin-left: 0 !important;
-        width: 100% !important
+        width: 100% !important;
     }
 }

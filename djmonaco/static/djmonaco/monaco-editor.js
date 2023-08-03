@@ -80,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     monaco.languages.json.jsonDefaults.setDiagnosticsOptions(diagnosticsOptions);
                 }
 
-                var editor = monaco.editor.create(document.getElementById(container.id + '--editor'), {
+                const editor = monaco.editor.create(document.getElementById(container.id + '--editor'), {
                     renderWhitespace: true,
                     language: container.dataset.language,
                     wordWrap: container.dataset.wordwrap || 'off',
@@ -90,6 +90,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     fontSize: 12 + 1,
                     value: container.value
                 });
+                const event = new CustomEvent('monaco:editor-created', {
+                    detail: {
+                        editor,
+                        container,
+                    },
+                });
+                document.dispatchEvent(event);
+
 
                 if (container.dataset.language === 'html') {
                     emmetMonaco.emmetHTML(monaco);

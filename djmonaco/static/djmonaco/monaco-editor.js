@@ -1,4 +1,23 @@
 'use strict';
+
+(function(){
+    document.addEventListener('DOMContentLoaded', function () {
+        require.config({
+            paths: {
+                'vs': 'https://unpkg.com/monaco-editor@0.40.0/min/vs',
+            },
+        });
+        require(['vs/editor/editor.main'], function () {
+            const event = new CustomEvent('monaco:library-loaded');
+            document.dispatchEvent(event);
+        });
+    });
+
+
+
+})()
+
+
 document.addEventListener('DOMContentLoaded', function () {
     const isInDjango = !!window.django && !!window.django.jQuery;
     require.config({
@@ -90,6 +109,10 @@ document.addEventListener('DOMContentLoaded', function () {
                     fontSize: 12 + 1,
                     value: container.value
                 });
+                editor.onDidChangeModelContent(() => {
+                    container.value = editor.getValue();
+                    container.dispatchEvent(new Event('change'));
+                });
                 const event = new CustomEvent('monaco:editor-created', {
                     detail: {
                         editor,
@@ -97,7 +120,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     },
                 });
                 document.dispatchEvent(event);
-
 
                 if (container.dataset.language === 'html') {
                     emmetMonaco.emmetHTML(monaco);

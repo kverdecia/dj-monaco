@@ -101,6 +101,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const editor = monaco.editor.create(document.getElementById(container.id + '--editor'), {
                     renderWhitespace: true,
+                    readOnly: container.dataset.readonly === 'true',
                     language: container.dataset.language,
                     wordWrap: container.dataset.wordwrap || 'off',
                     minimap: {
